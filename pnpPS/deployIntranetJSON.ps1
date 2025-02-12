@@ -3,12 +3,44 @@ param (
 )
 clear
 
+Function desplegarModulo {
+    param (
+        [string]$nombreModulo
+    )
+    try {
+        $modulo = $siteJson.modulos | Where-Object { $_.modulo -eq $nombreModulo }
+        if ($modulo) {
+            if( $modoInteractivo -eq $true) { 
+                Connect-PnPOnline -Url $urlAbsoluta -ClientId $clientId -Interactive
+                Write-Host "Conexión interactiva al site " $urlAbsoluta        
+            } 
+            else {
+                Connect-PnPOnline -Url $urlAbsoluta -UseWebLogin
+                Write-Host "Conexión UseWebLogin al site: "  $urlAbsoluta      
+            }
+
+            switch($nombreModulo) {
+                'HomePage'{
+                    & .\scripts\configurarHomePage.ps1 -Mensaje "Configurando pàgina de inici..." 
+                }
+            }
+        } else {
+            Write-Output "El sitio $($siteJson.urlSite) no tiene el módulo $($nombreModulo)"
+        }
+    }
+    catch {
+        write-host "Error: $($_.Exception.Message)" -foregroundcolor Red
+    }
+}
+
+
 try
 {
     $title="ACCIONES SOBRE LA INTRANET"
     $questionAccion = '¿Qué acción quieres realizar?'
     $choicesAccion = New-Object Collections.ObjectModel.Collection[Management.Automation.Host.ChoiceDescription]
     $choicesAccion.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&1.Borrar y crear estructura de sites'))
+    $choicesAccion.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&2.Desplegar Intranet'))
     $decisionAccion = $Host.UI.PromptForChoice($title, $questionAccion, $choicesAccion, 0)
 
     switch -regex ($decisionAccion) {
@@ -16,6 +48,11 @@ try
                 Write-Host 'Borrar y crear estructura de sites...'
                 $accion = 'Borrar-Crear-Sites'
                 $descripcionAccion= "Borrar y crear estructura de sites..."
+            }	
+        '1' {
+                Write-Host 'Desplegar intranet...'
+                $accion = 'DesplegarIntranet'
+                $descripcionAccion= "Desplegar intranet..."
             }	
         default { 
             $accion = ""
@@ -59,6 +96,28 @@ try
 			} 
 			Write-Host "Conexión establecida con éxito al tenant "  $tenantUrl 
         }
+        "DesplegarIntranet"
+		{
+            $JSONFIle = Get-Content $contenPlanFile | ConvertFrom-Json
+            $JSONFIle.sites | ForEach-Object {
+                Try{
+                    $siteJson = $_
+                    $urlAbsoluta = $siteJson.urlSiteAbsoluta
+                  
+                    $sharepointSite = Get-PnPTenantSite -Url $urlAbsoluta -ErrorAction SilentlyContinue
+                   
+                    if ($sharepointSite) {
+                        desplegarModulo -nombreModulo "HomePage" 
+                    } else {
+                        Write-Host "No existe el site actual: $($urlAbsoluta)"
+                    }
+                }
+                catch {
+                    write-host "Error: $($_.Exception.Message)" -foregroundcolor Red
+                }
+            } 
+        }
+
     }
 
     Stop-Transcript

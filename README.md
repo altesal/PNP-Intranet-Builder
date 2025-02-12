@@ -14,7 +14,12 @@
             CreaJSONIntranets.py
 
 
-2. Incluir en el .gitignore  pnpPS7/ESPECIFICO/*
+2. Incluir en el .gitignore  
+
+```
+pnpPS/ESPECIFICO/*
+!pnpPS/ESPECIFICO/.gitkeep
+```
 
 
 # Desplegar una nueva intranet
@@ -29,6 +34,7 @@
 
     - Hoja: SITES. Columnas: ['typeSite','titleSite','urlSite','esHUB','titleHUB','asociarAHUB']
 
+    - Hoja: Modulos. Columnas: ['Modulo','Desplegar','Site','Propiedades']
 
 3. Generar el contentPlan.json. Abrir una terminal y colocándose en `Utils>JSON` ejecutar
 

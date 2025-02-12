@@ -19,6 +19,7 @@ data["sites"] = []
 
 excelContentPlanPath = os.path.join(carpetaFicheroDatos, "contentPlan.xlsx")
 
+#Hoja SITES a desplegar
 columnasHojaSites = ['typeSite','titleSite','urlSite','esHUB','titleHUB','asociarAHUB']
 
 tablaExcelSites = pd.read_excel(excelContentPlanPath, sheet_name='SITES', usecols=columnasHojaSites)
@@ -36,6 +37,29 @@ for _, row in tablaExcelSites.iterrows():
         "navegacion":""
     }
     data["sites"].append(site)
+
+#Hoja Modulos a desplegar
+columnasFileModulos = ['Modulo','Desplegar','Site','Propiedades']
+modulosSiteExcel = pd.read_excel(excelContentPlanPath, sheet_name='Modulos', usecols=columnasFileModulos)
+modulosSiteExcel = modulosSiteExcel.fillna("")
+
+for site in data["sites"]:
+  site_name = site["urlSite"]  
+  modulos = [
+      {
+        "modulo": row["Modulo"],
+        "desplegar": row["Desplegar"],
+        "propiedades" : {
+            prop.split("=")[0]: prop.split("=")[1]
+            for prop in row["Propiedades"].split(";") if "=" in prop
+        } 
+      }
+      for _, row in modulosSiteExcel.iterrows() if row["Site"] == site_name or row["Site"] == "All"
+  ]
+  
+  site["modulos"] = modulos  
+
+
 
 with open(output_file, "w") as file:
         json.dump(data, file, indent=4)
