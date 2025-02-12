@@ -23,6 +23,9 @@ Function desplegarModulo {
                 'HomePage'{
                     & .\scripts\configurarHomePage.ps1 -Mensaje "Configurando pàgina de inici..." 
                 }
+                'NoticiasAvisos'{
+                    & .\scripts\addModuleNews.ps1 -Mensaje "Módulo News. Añadir content types Noticia y Avis..." -Modulo $modulo
+                }
             }
         } else {
             Write-Output "El sitio $($siteJson.urlSite) no tiene el módulo $($nombreModulo)"
@@ -108,6 +111,7 @@ try
                    
                     if ($sharepointSite) {
                         desplegarModulo -nombreModulo "HomePage" 
+                        desplegarModulo -nombreModulo "NoticiasAvisos"
                     } else {
                         Write-Host "No existe el site actual: $($urlAbsoluta)"
                     }
