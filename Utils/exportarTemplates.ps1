@@ -1,8 +1,8 @@
-# ************** INFO SENSIBLE *************
+# ************** INFO PRIVADA *************
 $siteCollectionPlantillaACopiar = "https://<tenantName>.sharepoint.com/sites/ics2-inici"
 $nombreIntranet = "<aliasIntranet>"
 $clientId = "<client_id>"
-# **************FIN INFO SENSIBLE***********
+# **************FIN INFO PRIVADA***********
 
 $saveTemplateLocation = ("..\pnpPS\ESPECIFICO\"+$nombreIntranet+"\Templates\")  
 $templateName = "templates"  
