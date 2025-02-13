@@ -28,7 +28,14 @@ pnpPS/ESPECIFICO/*
 
     `<nombre_entorno>`
 
-        Data\contentPlan.xlsx
+       ✅  Data. Contiene el fichero contentPlan.xlsx a partir del que se generará el contentPlan.json
+       ✅  Images. Contiene por ejemplo el logo
+       ✅  Templates. 
+                    - Subir plantillas **Requiere conexión interactive**
+                    - Contiene ficheros xml con plantillas
+                    - Los ficheros xml pueden generarse ejecutando el script individual exportarTemplates.ps1 de Utils (este script no requiere conexión interactive) 
+                    - Recomendable no incluir caracteres especiales en los nombres de ficheros de plantillas
+                    
 
 2. Hojas del contentPlan.xlsx
 

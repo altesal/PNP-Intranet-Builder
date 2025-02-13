@@ -8,23 +8,35 @@ Function desplegarModulo {
         [string]$nombreModulo
     )
     try {
-        $modulo = $siteJson.modulos | Where-Object { $_.modulo -eq $nombreModulo }
+        $modulo = $siteJson.modulos | Where-Object { $_.modulo -eq $nombreModulo -and $_.desplegar -eq 1 }
         if ($modulo) {
             if( $modoInteractivo -eq $true) { 
                 Connect-PnPOnline -Url $urlAbsoluta -ClientId $clientId -Interactive
-                Write-Host "Conexión interactiva al site " $urlAbsoluta        
             } 
             else {
                 Connect-PnPOnline -Url $urlAbsoluta -UseWebLogin
-                Write-Host "Conexión UseWebLogin al site: "  $urlAbsoluta      
             }
 
-            switch($nombreModulo) {
-                'HomePage'{
-                    & .\scripts\configurarHomePage.ps1 -Mensaje "Configurando pàgina de inici..." 
-                }
-                'NoticiasAvisos'{
-                    & .\scripts\addModuleNews.ps1 -Mensaje "Módulo News. Añadir content types Noticia y Avis..." -Modulo $modulo
+            $context = Get-PnPContext
+            if ($context -eq $null) {
+                Write-Host "❌ No hay conexión activa con SharePoint." -ForegroundColor Red
+            } else {
+                Write-Host "✅ Conectado a SharePoint correctamente." -ForegroundColor Green
+                Write-Host "URL del sitio conectado: $($context.Url) con ModoInteractivo $($modoInteractivo)" -ForegroundColor Cyan
+                
+                switch($nombreModulo) {
+                    'HomePage'{
+                        & .\scripts\configurarHomePage.ps1 -Mensaje "Configurando pàgina de inici..." 
+                    }
+                    'NoticiasAvisos'{
+                        & .\scripts\addModuleNews.ps1 -Mensaje "Módulo News. Añadir content types Noticia y Avis..." -Modulo $modulo
+                    }
+                    'Templates'{
+                        & .\scripts\uploadTemplates.ps1 -Mensaje "Subiendo plantillas a la biblioteca de páginas de sitio"
+                    }
+                    'Images'{
+                        & .\scripts\uploadImages.ps1 -Mensaje "Subiendo imágenes a la biblioteca Site Assets"
+                    }
                 }
             }
         } else {
@@ -32,7 +44,11 @@ Function desplegarModulo {
         }
     }
     catch {
-        write-host "Error: $($_.Exception.Message)" -foregroundcolor Red
+        Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "Tipo de excepción: $($_.Exception.GetType().FullName)" 
+        Write-Host "Detalles completos de la excepción: $($_.Exception.ToString())" 
+        Write-Host "Pila de llamadas (StackTrace): $($_.Exception.StackTrace)"
+
     }
 }
 
@@ -112,6 +128,8 @@ try
                     if ($sharepointSite) {
                         desplegarModulo -nombreModulo "HomePage" 
                         desplegarModulo -nombreModulo "NoticiasAvisos"
+                        desplegarModulo -nombreModulo "Images"
+                        desplegarModulo -nombreModulo "Templates"
                     } else {
                         Write-Host "No existe el site actual: $($urlAbsoluta)"
                     }
