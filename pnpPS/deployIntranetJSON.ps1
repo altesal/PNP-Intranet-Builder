@@ -11,9 +11,11 @@ Function desplegarModulo {
         $modulo = $siteJson.modulos | Where-Object { $_.modulo -eq $nombreModulo -and $_.desplegar -eq 1 }
         if ($modulo) {
             if( $modoInteractivo -eq $true) { 
+                Write-Host  "Conexión interactiva..."
                 Connect-PnPOnline -Url $urlAbsoluta -ClientId $clientId -Interactive
             } 
             else {
+                Write-Host "Conexión UseWebLogin..."
                 Connect-PnPOnline -Url $urlAbsoluta -UseWebLogin
             }
 
@@ -32,13 +34,16 @@ Function desplegarModulo {
                         & .\scripts\addModuleNews.ps1 -Mensaje "Módulo News. Añadir content types Noticia y Avis..." -Modulo $modulo
                     }
                     'Templates'{
-                        & .\scripts\uploadTemplates.ps1 -Mensaje "Subiendo plantillas a la biblioteca de páginas de sitio"
+                        & .\scripts\uploadTemplates.ps1 -Mensaje "Subiendo plantillas a la biblioteca Site Pages -> Templates..."
+                    }
+                    'ContentPages'{
+                        & .\scripts\uploadContentPages.ps1 -Mensaje "Subiendo páginas de contenido a la biblioteca Site Pages"
                     }
                     'Images'{
                         & .\scripts\uploadImages.ps1 -Mensaje "Subiendo imágenes a la biblioteca Site Assets"
                     }
                 }
-            }
+            }   
         } else {
             Write-Output "El sitio $($siteJson.urlSite) no tiene el módulo $($nombreModulo)"
         }
@@ -122,7 +127,7 @@ try
                 Try{
                     $siteJson = $_
                     $urlAbsoluta = $siteJson.urlSiteAbsoluta
-                  
+                    Write-Host "URLAbsoluta: " $urlAbsoluta
                     $sharepointSite = Get-PnPTenantSite -Url $urlAbsoluta -ErrorAction SilentlyContinue
                    
                     if ($sharepointSite) {
@@ -130,6 +135,7 @@ try
                         desplegarModulo -nombreModulo "NoticiasAvisos"
                         desplegarModulo -nombreModulo "Images"
                         desplegarModulo -nombreModulo "Templates"
+                        desplegarModulo -nombreModulo "ContentPages"
                     } else {
                         Write-Host "No existe el site actual: $($urlAbsoluta)"
                     }

@@ -1,10 +1,10 @@
 # ************** INFO PRIVADA *************
-$siteCollectionPlantillaACopiar = "https://<tenantName>.sharepoint.com/sites/ics2-inici"
-$nombreIntranet = "<aliasIntranet>"
+$siteCollectionPlantillaACopiar = "https://zs8ry.sharepoint.com/sites/ics2-inici"
+$nombreIntranet = "ICS"
 $clientId = "<client_id>"
 # **************FIN INFO PRIVADA***********
 
-$saveTemplateLocation = ("..\pnpPS\ESPECIFICO\"+$nombreIntranet+"\Templates\")  
+$saveTemplateLocation = ("..\pnpPS\ESPECIFICO\"+$nombreIntranet+"\Templates\Templates")  
 $templateName = "templates"  
 
 if (Test-Path $saveTemplateLocation)
@@ -18,7 +18,6 @@ if (Test-Path $saveTemplateLocation)
             Write-Host "❌ No hay conexión activa con SharePoint." -ForegroundColor Red
         } else {
             Write-Host "✅ Conectado a SharePoint correctamente." -ForegroundColor Green
-            Write-Host "URL del sitio conectado: $($context.Url) con ModoInteractivo $($modoInteractivo)" -ForegroundColor Cyan
             $siteTemplate = Get-PnPSiteTemplate -IncludeAllClientSidePages -Handlers Pages,PageContents -OutputInstance
             $pagesTemplate = New-PnPSiteTemplate
             foreach($page in $siteTemplate.ClientSidePages)
@@ -32,13 +31,13 @@ if (Test-Path $saveTemplateLocation)
             Write-Host "Plantillas disponibles..."
             $pagesTemplate
 
-            Save-PnPSiteTemplate -Template $pagesTemplate -Out ("{0}{1}.xml" -f $saveTemplateLocation, $templateName) -Force
+            Save-PnPSiteTemplate -Template $pagesTemplate -Out ("{0}\{1}.xml" -f $saveTemplateLocation, $templateName) -Force
         }
     } catch {
         Write-Host "❌ Error: $($_.Exception.Message)" -ForegroundColor Red
     }                
 } else {
-     Write-Host "❌ Error: No existe la carpeta Templates o está mal configurada la ruta de acceso" -ForegroundColor Red
+     Write-Host "❌ Error: No existe la carpeta $($saveTemplateLocation)" -ForegroundColor Red
 }
 
 
