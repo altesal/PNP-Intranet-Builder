@@ -23,7 +23,7 @@ $sites.sites | ForEach-Object {
                     Write-Host "Error al crear el HUB site porque no tiene valor la propiedad titleHUB" -f Red
                     return
                 }
-                Register-PnPHubSite -Site $urlAbsoluta 
+                $registerPnPHubSite = Register-PnPHubSite -Site $urlAbsoluta 
                 Set-PnPHubSite -Identity $urlAbsoluta -Title $site.titleHUB   
                 Write-Host "HUB Site creado:" $urlAbsoluta -f Green
                 Start-Sleep -Seconds 2

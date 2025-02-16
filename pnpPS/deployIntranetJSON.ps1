@@ -11,9 +11,11 @@ Function desplegarModulo {
         $modulo = $siteJson.modulos | Where-Object { $_.modulo -eq $nombreModulo -and $_.desplegar -eq 1 }
         if ($modulo) {
             if( $modoInteractivo -eq $true) { 
+                Write-Host  "Conexión interactiva..."
                 Connect-PnPOnline -Url $urlAbsoluta -ClientId $clientId -Interactive
             } 
             else {
+                Write-Host "Conexión UseWebLogin..."
                 Connect-PnPOnline -Url $urlAbsoluta -UseWebLogin
             }
 
@@ -32,13 +34,16 @@ Function desplegarModulo {
                         & .\scripts\addModuleNews.ps1 -Mensaje "Módulo News. Añadir content types Noticia y Avis..." -Modulo $modulo
                     }
                     'Templates'{
-                        & .\scripts\uploadTemplates.ps1 -Mensaje "Subiendo plantillas a la biblioteca de páginas de sitio"
+                        & .\scripts\uploadTemplates.ps1 -Mensaje "Subiendo plantillas a la biblioteca Site Pages -> Templates..."
+                    }
+                    'ContentPages'{
+                        & .\scripts\uploadContentPages.ps1 -Mensaje "Subiendo páginas de contenido a la biblioteca Site Pages"
                     }
                     'Images'{
                         & .\scripts\uploadImages.ps1 -Mensaje "Subiendo imágenes a la biblioteca Site Assets"
                     }
                 }
-            }
+            }   
         } else {
             Write-Output "El sitio $($siteJson.urlSite) no tiene el módulo $($nombreModulo)"
         }
@@ -113,7 +118,6 @@ try
 				Connect-PnPOnline -Url $tenantUrl -UseWebLogin
 				Write-Host "BORRAR Y CREAR SITES - Requiere Permisos AllSites.FullControl en el registro de la aplicación de Azure"
 			} 
-			Write-Host "Conexión establecida con éxito al tenant "  $tenantUrl 
         }
         "DesplegarIntranet"
 		{
@@ -122,17 +126,12 @@ try
                 Try{
                     $siteJson = $_
                     $urlAbsoluta = $siteJson.urlSiteAbsoluta
-                  
-                    $sharepointSite = Get-PnPTenantSite -Url $urlAbsoluta -ErrorAction SilentlyContinue
-                   
-                    if ($sharepointSite) {
-                        desplegarModulo -nombreModulo "HomePage" 
-                        desplegarModulo -nombreModulo "NoticiasAvisos"
-                        desplegarModulo -nombreModulo "Images"
-                        desplegarModulo -nombreModulo "Templates"
-                    } else {
-                        Write-Host "No existe el site actual: $($urlAbsoluta)"
-                    }
+
+                    desplegarModulo -nombreModulo "HomePage" 
+                    desplegarModulo -nombreModulo "NoticiasAvisos"
+                    desplegarModulo -nombreModulo "Images"
+                    desplegarModulo -nombreModulo "Templates"
+                    desplegarModulo -nombreModulo "ContentPages"
                 }
                 catch {
                     write-host "Error: $($_.Exception.Message)" -foregroundcolor Red

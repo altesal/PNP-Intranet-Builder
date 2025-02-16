@@ -8,13 +8,12 @@ function Add-ContentType-ToSite {
         [Parameter(Mandatory = $true)] [string]$nameContentType = $null
     )
 
-	$ctypes = Get-PnPContentType | Where-Object {$_.Group -eq "Espai intranets"} | Select-Object -ExpandProperty Name
-	$ctypes | ForEach-Object { Write-Host $_ }
+	#$ctypes = Get-PnPContentType | Where-Object {$_.Group -eq "Espai intranets"} | Select-Object -ExpandProperty Name
+	#$ctypes | ForEach-Object { Write-Host $_ }
 	$ListName = "Site Pages"
 	$ctype = Get-PnPContentType -Identity $nameContentType
 	Write-host "Info ctype "  $ctype.Name $ctype.Id
     Add-PnPContentTypeToList -List $ListName -ContentType $ctype.Name
-    
 }
 
 Write-Host $Mensaje
@@ -30,7 +29,7 @@ $Modulo.propiedades.PSObject.Properties | ForEach-Object {
         }
 }
 
-Write-host "UrlAbsoluta: $($urlAbsoluta)  nameContentType: $($nameContentType)"
+#Write-host "UrlAbsoluta: $($urlAbsoluta)  nameContentType: $($nameContentType)"
 Add-PnPContentTypesFromContentTypeHub -Site $urlAbsoluta -ContentTypes $idContentTypeNoticies
 Add-PnPContentTypesFromContentTypeHub -Site $urlAbsoluta -ContentTypes $idContentTypeAvis  
 
