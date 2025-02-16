@@ -21,8 +21,8 @@ Get-ChildItem -Path $templatesPath -Filter "*.xml" -File | ForEach-Object {
     Write-Host "Número de templates con páginas ASPX: $($aspxPages.Count)"
     $aspxPages | ForEach-Object { 
         if ($_.PageName) {
-                Write-Host "Template: $_.PageName"
-                Set-PnPPage -Identity $_.PageName -Publish
+                #Write-Host "Template: $_.PageName"
+                $SetPnPPage = Set-PnPPage -Identity $_.PageName -Publish
             } else {
                 Write-Host "El nodo no tiene PageName" -ForegroundColor Yellow
             }

@@ -118,7 +118,6 @@ try
 				Connect-PnPOnline -Url $tenantUrl -UseWebLogin
 				Write-Host "BORRAR Y CREAR SITES - Requiere Permisos AllSites.FullControl en el registro de la aplicación de Azure"
 			} 
-			Write-Host "Conexión establecida con éxito al tenant "  $tenantUrl 
         }
         "DesplegarIntranet"
 		{
@@ -127,18 +126,12 @@ try
                 Try{
                     $siteJson = $_
                     $urlAbsoluta = $siteJson.urlSiteAbsoluta
-                    Write-Host "URLAbsoluta: " $urlAbsoluta
-                    $sharepointSite = Get-PnPTenantSite -Url $urlAbsoluta -ErrorAction SilentlyContinue
-                   
-                    if ($sharepointSite) {
-                        desplegarModulo -nombreModulo "HomePage" 
-                        desplegarModulo -nombreModulo "NoticiasAvisos"
-                        desplegarModulo -nombreModulo "Images"
-                        desplegarModulo -nombreModulo "Templates"
-                        desplegarModulo -nombreModulo "ContentPages"
-                    } else {
-                        Write-Host "No existe el site actual: $($urlAbsoluta)"
-                    }
+
+                    desplegarModulo -nombreModulo "HomePage" 
+                    desplegarModulo -nombreModulo "NoticiasAvisos"
+                    desplegarModulo -nombreModulo "Images"
+                    desplegarModulo -nombreModulo "Templates"
+                    desplegarModulo -nombreModulo "ContentPages"
                 }
                 catch {
                     write-host "Error: $($_.Exception.Message)" -foregroundcolor Red
