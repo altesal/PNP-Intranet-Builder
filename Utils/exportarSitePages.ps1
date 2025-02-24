@@ -1,12 +1,12 @@
 # ************** INFO PRIVADA *************
-$siteCollectionPlantillaACopiar = "https://zs8ry.sharepoint.com/sites/dev-espai-inici"
-$nombreIntranet = "ICS"
+$siteCollectionPlantillaACopiar = "https://zs8ry.sharepoint.com/sites/ics2-inici"
+$nombreIntranet = "ICS2"
 $clientId = "<client_id>"
 # ************* Nombre fichero exportado ***
-$templateName = "contentICS" 
+$templateName = "HomeICS2" 
 # ************** FIN INFO PRIVADA***********
 
-$saveTemplateLocation = ("..\pnpPS\ESPECIFICO\"+$nombreIntranet+"\Templates\ContentPages")  
+$saveTemplateLocation = ("..\pnpPS\ESPECIFICO\"+$nombreIntranet+"\Templates\exportaciones")  
  
 
 if (Test-Path $saveTemplateLocation)

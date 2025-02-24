@@ -4,7 +4,7 @@ $nombreIntranet = "ICS"
 $clientId = "<client_id>"
 # **************FIN INFO PRIVADA***********
 
-$saveTemplateLocation = ("..\pnpPS\ESPECIFICO\"+$nombreIntranet+"\Templates\Templates")  
+$saveTemplateLocation = ("..\pnpPS\ESPECIFICO\"+$nombreIntranet+"\Templates\exportaciones")  
 $templateName = "templates"  
 
 if (Test-Path $saveTemplateLocation)

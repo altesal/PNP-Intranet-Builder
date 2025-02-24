@@ -92,56 +92,64 @@ try
     $titleEntorno="ENTORNOS"
     $entornoSeleccionado = $Host.UI.PromptForChoice($titleEntorno, $questionEntorno, $choicesEntorno, 0)
 
-    $ficheroConfiguracion = ".\ESPECIFICO\$($nombreIntranet)\config.json" 
-    $config = (Get-Content $ficheroConfiguracion | ConvertFrom-Json).Configuracion | Where-Object { $_.Entorno -eq "DEV" }
-    if ($config.Count -ne 1) { throw "Se esperaba exactamente un objeto, pero se encontraron $($config.Count)." }
-	$nombreFichero = & "..\Utils\nombreFicheroLog.ps1" -entorno $config.entorno
-	$fitxerLog = (".\ESPECIFICO\" + $nombreIntranet + "\Log\" + $nombreFichero) 
-    
-    Start-Transcript -Path $fitxerLog
-    $config
-    $modoInteractivo = [bool]($config.Interactive -eq 1)
-    $tenantUrl = $config.TenantURL
-    $clientId = $config.AplicacionRegistradaAzure
-    $contenPlanFile = (".\ESPECIFICO\"+$nombreIntranet+"\Data\contentPlan.json")
+    $ficheroConfiguracion = ".\ESPECIFICO\$($nombreIntranet)\config.json"
 
-    switch ($accion) {
-        "Borrar-Crear-Sites" {
-            if( $modoInteractivo -eq $true) { 
-   				Write-Host "Conexión interactiva..."        
-        		Connect-PnPOnline -Url $tenantUrl -ClientId $clientId -Interactive
-				& .\scripts\borrarSites.ps1 -Mensaje "Borrando sites..." 
-				& .\scripts\crearSites.ps1 -Mensaje "Creando estructura de sites..." 
-			} 
-			else {
-				Write-Host "Conexión UseWebLogin al urlTenant: "  $tenantUrl      
-				Connect-PnPOnline -Url $tenantUrl -UseWebLogin
-				Write-Host "BORRAR Y CREAR SITES - Requiere Permisos AllSites.FullControl en el registro de la aplicación de Azure"
-			} 
+    if (Test-Path $ficheroConfiguracion) {
+        $config = (Get-Content $ficheroConfiguracion | ConvertFrom-Json).Configuracion | Where-Object { $_.Entorno -eq "DEV" }
+        if ($config.Count -ne 1) { throw "Se esperaba exactamente un objeto, pero se encontraron $($config.Count)." }
+        $nombreFichero = & "..\Utils\nombreFicheroLog.ps1" -entorno $config.entorno
+        $fitxerLog = (".\ESPECIFICO\" + $nombreIntranet + "\Log\" + $nombreFichero) 
+        
+        Start-Transcript -Path $fitxerLog
+        $config
+        $modoInteractivo = [bool]($config.Interactive -eq 1)
+        $tenantUrl = $config.TenantURL
+        $clientId = $config.AplicacionRegistradaAzure
+        $contenPlanFile = (".\ESPECIFICO\"+$nombreIntranet+"\Data\contentPlan.json")
+
+        switch ($accion) {
+            "Borrar-Crear-Sites" {
+                if( $modoInteractivo -eq $true) { 
+                    Write-Host "Conexión interactiva..."        
+                    Connect-PnPOnline -Url $tenantUrl -ClientId $clientId -Interactive
+                    & .\scripts\borrarSites.ps1 -Mensaje "Borrando sites..." 
+                    & .\scripts\crearSites.ps1 -Mensaje "Creando estructura de sites..." 
+                } 
+                else {
+                    Write-Host "Conexión UseWebLogin al urlTenant: "  $tenantUrl      
+                    Connect-PnPOnline -Url $tenantUrl -UseWebLogin
+                    Write-Host "BORRAR Y CREAR SITES - Requiere Permisos AllSites.FullControl en el registro de la aplicación de Azure"
+                } 
+            }
+            "DesplegarIntranet"
+            {
+                $JSONFIle = Get-Content $contenPlanFile | ConvertFrom-Json
+                $JSONFIle.sites | ForEach-Object {
+                    Try{
+                        $siteJson = $_
+                        $urlAbsoluta = $siteJson.urlSiteAbsoluta
+
+                        desplegarModulo -nombreModulo "HomePage" 
+                        
+                        desplegarModulo -nombreModulo "NoticiasAvisos"
+                        desplegarModulo -nombreModulo "Images"
+                        desplegarModulo -nombreModulo "Templates"
+                        desplegarModulo -nombreModulo "ContentPages"
+                        desplegarModulo -nombreModulo "NavegacionPrincipal"
+                        <##>
+                    }
+                    catch {
+                        write-host "Error: $($_.Exception.Message)" -foregroundcolor Red
+                    }
+                } 
+            }
+
         }
-        "DesplegarIntranet"
-		{
-            $JSONFIle = Get-Content $contenPlanFile | ConvertFrom-Json
-            $JSONFIle.sites | ForEach-Object {
-                Try{
-                    $siteJson = $_
-                    $urlAbsoluta = $siteJson.urlSiteAbsoluta
 
-                    desplegarModulo -nombreModulo "HomePage" 
-                    desplegarModulo -nombreModulo "NoticiasAvisos"
-                    desplegarModulo -nombreModulo "Images"
-                    desplegarModulo -nombreModulo "Templates"
-                    desplegarModulo -nombreModulo "ContentPages"
-                }
-                catch {
-                    write-host "Error: $($_.Exception.Message)" -foregroundcolor Red
-                }
-            } 
-        }
-
+        Stop-Transcript
+    } else {
+        Write-Host "No existe el fichero de configuración $($ficheroConfiguracion)"
     }
-
-    Stop-Transcript
 
 } 
 catch{

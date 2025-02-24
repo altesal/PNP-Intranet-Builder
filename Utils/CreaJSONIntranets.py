@@ -56,7 +56,6 @@ for site in data["sites"]:
       }
       for _, row in modulosSiteExcel.iterrows() if row["Site"] == site_name or row["Site"] == "All"
   ]
-  
   site["modulos"] = modulos  
 
 
