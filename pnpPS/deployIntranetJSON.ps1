@@ -42,6 +42,12 @@ Function desplegarModulo {
                     'Images'{
                         & .\scripts\uploadImages.ps1 -Mensaje "Subiendo imágenes a la biblioteca Site Assets"
                     }
+                    'NavegacionPrincipal'{
+                        & .\scripts\navegacionPrincipal.ps1 -Mensaje "Creando la Navegación Principal..."
+                    }
+                    'NavegacionQuickLunch'{
+                        & .\scripts\navegacionQuickLunch.ps1 -Mensaje "Creando la Navegación QuickLunch..."
+                    }
                 }
             }   
         } else {
@@ -136,6 +142,7 @@ try
                         desplegarModulo -nombreModulo "Templates"
                         desplegarModulo -nombreModulo "ContentPages"
                         desplegarModulo -nombreModulo "NavegacionPrincipal"
+                        desplegarModulo -nombreModulo "NavegacionQuickLunch"
                         <##>
                     }
                     catch {

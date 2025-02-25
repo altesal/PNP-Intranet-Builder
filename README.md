@@ -37,12 +37,19 @@ pnpPS/ESPECIFICO/*
 1. Crear dentro de `pnpPS>ESPECIFICO` la siguiente estructura de carpetas 
 
     `<nombre_entorno>`
+
        ✅  Data. Contiene el fichero contentPlan.xlsx a partir del que se generará el contentPlan.json
+    
        ✅  Images. Contiene por ejemplo el logo.png
+    
        ✅  Templates. 
+    
                     - Subir plantillas **Requiere conexión interactive**
+    
                     - Contiene ficheros xml con plantillas
+    
                     - Los ficheros xml pueden generarse ejecutando el script individual exportarTemplates.ps1 de Utils (este script no requiere conexión interactive) 
+    
                     - Recomendable no incluir caracteres especiales en los nombres de ficheros de plantillas
                     
 
@@ -53,6 +60,8 @@ pnpPS/ESPECIFICO/*
     - Hoja: Modulos. Columnas: ['Modulo','Desplegar','Site','Propiedades']
 
     - Hoja: Content Plan. Columnas: ['ID', 'Nivel','NavPrincipal', 'ParentID', 'displayNameN1', 'urlN1','link'] 
+
+            
 
 3. Generar el contentPlan.json. Abrir una terminal y colocándose en `Utils>JSON` ejecutar
 
