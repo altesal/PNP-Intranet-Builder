@@ -9,8 +9,10 @@ Get-ChildItem -Path $templatesPath -File | Where-Object { $_.Extension -eq ".xml
 
     Write-Host "TemplatesPath: $($templatesPath )"
     $timestamp = Get-Date -Format "yyyyMMddHHmmss"
+    $tmpTempplateFiles = $templatesPath + "\tmp"
+    Remove-Item -Path $tmpTempplateFiles\* -Recurse -Force
     $sourceFilePath = Join-Path -Path $templatesPath -ChildPath $_.Name
-    $destinationFilePath = Join-Path -Path $templatesPath -ChildPath "$($_.BaseName)_$timestamp$($_.Extension)"
+    $destinationFilePath = Join-Path -Path $tmpTempplateFiles -ChildPath "$($_.BaseName)_$timestamp$($_.Extension)"
     Write-host "Source FilePath: $($sourceFilePath) y Destination FilePath: $($destinationFilePath)"
     Copy-Item -Path $sourceFilePath -Destination $destinationFilePath -Force
 
@@ -21,7 +23,7 @@ Get-ChildItem -Path $templatesPath -File | Where-Object { $_.Extension -eq ".xml
     
     $namespaceManager = New-Object System.Xml.XmlNamespaceManager($xmlContent.DocumentElement.OwnerDocument.NameTable)
     $namespaceManager.AddNamespace("pnp", "http://schemas.dev.office.com/PnP/2022/09/ProvisioningSchema")  
-    $aspxPages = $xmlContent.SelectNodes("//pnp:ClientSidePage[@PromoteAsTemplate='false' and @PromoteAsNewsArticle='true']", $namespaceManager)
+    $aspxPages = $xmlContent.SelectNodes("//pnp:ClientSidePage[(@PromoteAsTemplate='false' and @PromoteAsNewsArticle='true') or @PageName='Home.aspx']", $namespaceManager)
     
     Write-Host "Número total de páginas ASPX en el fichero $($fullPath): $($aspxPages.Count)"
     $paginasValidas = @()
@@ -69,10 +71,16 @@ Get-ChildItem -Path $templatesPath -File | Where-Object { $_.Extension -eq ".xml
    $paginasValidas
     if($paginasValidas.Count -gt 0)
     {
-        Invoke-PnPSiteTemplate -Path $fullPath #-Parameters @{"SiteTitle"=$titleSite;"SiteUrl"=$siteUrl}
+        Invoke-PnPSiteTemplate -Path $fullPath 
         $paginasValidas | ForEach-Object {
             Write-Host "📄 Publicando página: $_" 
-            $SetPnPPage = Set-PnPPage -Identity $_ -Publish
+            if ($_ -eq "Home.aspx")
+            {
+                $SetPnPPage = Set-PnPPage -Identity $_ -Publish -PromoteAs HomePage
+            }
+            else {
+                $SetPnPPage = Set-PnPPage -Identity $_ -Publish -PromoteAs NewsArticle
+            }
         }
     }
     Write-Host "Fichero a borrar $($fullPath)"

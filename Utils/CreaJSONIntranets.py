@@ -65,7 +65,7 @@ tablaExcelNavegacion = tablaExcelNavegacion.fillna("")
 def construir_navegacion(tablaExcelNavegacion, parent_id, site_url):
     items = []
     df_filtrado = tablaExcelNavegacion[(tablaExcelNavegacion["ParentID"] == parent_id) & (tablaExcelNavegacion["urlN1"] == site_url)]
-    print(f"DataFrame: {df_filtrado}")
+    #print(f"DataFrame: {df_filtrado}")
     for _, row in df_filtrado.iterrows():
         nodo = {
             "ID": row["ID"],
@@ -81,6 +81,7 @@ def construir_navegacion(tablaExcelNavegacion, parent_id, site_url):
 # Iteramos por cada sitio y le agregamos la navegación
 for sitio in data["sites"]:
     navegacion = construir_navegacion(tablaExcelNavegacion, parent_id="",site_url=sitio["urlSite"])  # Ajustar el parent_id según sea necesario
+ 
     sitio["navegacion"] = navegacion  # Agregar la navegación al sitio
 
 

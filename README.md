@@ -68,7 +68,15 @@ pnpPS/ESPECIFICO/*
     ```
     py.exe CreaJSONIntranets.py <alias_intranet>
 
+    ````
+4. Exportar una plantilla
 
+    COnfigurar variables  en las primeras líneas del fichero exportarSitePages.ps1
+
+    ```
+    PS C:\...\PNP-Intranet-Builder\Utils
+    exportarSitePages.ps1
+    ```    
 
 
 

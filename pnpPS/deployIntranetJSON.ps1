@@ -135,8 +135,7 @@ try
                         $siteJson = $_
                         $urlAbsoluta = $siteJson.urlSiteAbsoluta
 
-                        desplegarModulo -nombreModulo "HomePage" 
-                        
+                        desplegarModulo -nombreModulo "HomePage"
                         desplegarModulo -nombreModulo "NoticiasAvisos"
                         desplegarModulo -nombreModulo "Images"
                         desplegarModulo -nombreModulo "Templates"
