@@ -1,8 +1,7 @@
 # ************** INFO PRIVADA *************
-$siteCollectionPlantillaACopiar = "https://zs8ry.sharepoint.com/sites/ics2-inici"
-$nombreIntranet = "ICS"
-$clientId = "<client_id>"
-# **************FIN INFO PRIVADA***********
+$siteCollectionPlantillaACopiar = "https://<MITENANT>.sharepoint.com/sites/ics2-inici"
+$nombreIntranet = "<ALIAS_INTRANET>"
+$clientId = "<client_id>
 
 $saveTemplateLocation = ("..\pnpPS\ESPECIFICO\"+$nombreIntranet+"\Templates\exportaciones")  
 $templateName = "templates"  
@@ -10,8 +9,8 @@ $templateName = "templates"
 if (Test-Path $saveTemplateLocation)
 {
     try {
-        #Connect-PnPOnline -Url $siteCollectionPlantillaACopiar -ClientId  $clientId -Interactive
-        Connect-PnPOnline -Url $siteCollectionPlantillaACopiar -UseWebLogin
+        Connect-PnPOnline -Url $siteCollectionPlantillaACopiar -ClientId  $clientId -Interactive
+        #Connect-PnPOnline -Url $siteCollectionPlantillaACopiar -UseWebLogin
 
         $context = Get-PnPContext
         if ($context -eq $null) {

@@ -1,9 +1,9 @@
 # ************** INFO PRIVADA *************
-$siteCollectionPlantillaACopiar = "https://zs8ry.sharepoint.com/sites/ics2-inici"
-$nombreIntranet = "ICS2"
+$siteCollectionPlantillaACopiar = "https://<mitenant>.sharepoint.com/sites/ics2-inici"
+$nombreIntranet = "<alias>"
 $clientId = "<client_id>"
 # ************* Nombre fichero exportado ***
-$templateName = "HomeICS2" 
+$templateName = "SitePages" 
 # ************** FIN INFO PRIVADA***********
 
 $saveTemplateLocation = ("..\pnpPS\ESPECIFICO\"+$nombreIntranet+"\Templates\exportaciones")  

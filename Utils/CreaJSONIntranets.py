@@ -58,7 +58,7 @@ for site in data["sites"]:
   site["modulos"] = modulos  
 
 #Hoja Content Plan. Navegación
-columnasHojaContentPlan = ['ID', 'Nivel','NavPrincipal', 'ParentID', 'displayNameN1', 'urlN1','link']
+columnasHojaContentPlan = ['ID', 'Nivel','NavPrincipal', 'ParentID', 'displayNameN1', 'urlN1','link','Plantilla recomanat']
 tablaExcelNavegacion = pd.read_excel(excelContentPlanPath, sheet_name='ContentPlan', usecols=columnasHojaContentPlan)
 tablaExcelNavegacion = tablaExcelNavegacion.fillna("")
 
@@ -73,6 +73,7 @@ def construir_navegacion(tablaExcelNavegacion, parent_id, site_url):
             "NavPrincipal" : 1 if row["NavPrincipal"] == 1 else 0,
             "Descripcion": row["displayNameN1"],
             "url": row["link"],
+            "plantilla":row["Plantilla recomanat"],
             "Submenus": construir_navegacion(tablaExcelNavegacion, row["ID"],site_url)  # Llamada recursiva
         }
         items.append(nodo)

@@ -75,7 +75,8 @@ pnpPS/ESPECIFICO/*
 
     ```
     PS C:\...\PNP-Intranet-Builder\Utils
-    exportarSitePages.ps1
+    exportarSitePages.ps1  #Puese usar conexión UseWebLogin
+    exportarTemplates.psq  #Requiere conexión interactiva y cliensId
     ```    
 
 
