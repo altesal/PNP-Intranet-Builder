@@ -62,11 +62,21 @@ columnasHojaContentPlan = ['ID', 'Nivel','NavPrincipal', 'ParentID', 'displayNam
 tablaExcelNavegacion = pd.read_excel(excelContentPlanPath, sheet_name='ContentPlan', usecols=columnasHojaContentPlan)
 tablaExcelNavegacion = tablaExcelNavegacion.fillna("")
 
-def construir_navegacion(tablaExcelNavegacion, parent_id, site_url):
+def construir_navegacion(tablaExcelNavegacion, parent_id, site_url, parent_level2_desc=""):
     items = []
     df_filtrado = tablaExcelNavegacion[(tablaExcelNavegacion["ParentID"] == parent_id) & (tablaExcelNavegacion["urlN1"] == site_url)]
     #print(f"DataFrame: {df_filtrado}")
     for _, row in df_filtrado.iterrows():
+        nivel = row["Nivel"]
+
+        if nivel == 0:
+            folder = ""
+        elif nivel == 1 or nivel == 2:
+            folder = row["displayNameN1"]
+            parent_level2_desc = folder  # Guardar el nombre para los niveles 3+
+        elif nivel >= 3:
+            folder = parent_level2_desc
+
         nodo = {
             "ID": row["ID"],
             "Nivel":row["Nivel"],
@@ -74,7 +84,8 @@ def construir_navegacion(tablaExcelNavegacion, parent_id, site_url):
             "Descripcion": row["displayNameN1"],
             "url": row["link"],
             "plantilla":row["Plantilla recomanat"],
-            "Submenus": construir_navegacion(tablaExcelNavegacion, row["ID"],site_url)  # Llamada recursiva
+            "folder": folder,
+            "Submenus": construir_navegacion(tablaExcelNavegacion, row["ID"],site_url,parent_level2_desc)  # Llamada recursiva
         }
         items.append(nodo)
     return items

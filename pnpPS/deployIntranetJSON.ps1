@@ -38,6 +38,7 @@ Function desplegarModulo {
                     }
                     'ContentPages'{
                         & .\scripts\uploadContentPages.ps1 -Mensaje "Subiendo páginas de contenido a la biblioteca Site Pages"
+                        & .\scripts\createDocumentLibrary.ps1 -Mensaje "Creando bibliotecas en la biblioteca Site Pages"
                     }
                     'Images'{
                         & .\scripts\uploadImages.ps1 -Mensaje "Subiendo imágenes a la biblioteca Site Assets"
