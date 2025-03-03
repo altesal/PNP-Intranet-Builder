@@ -11,13 +11,6 @@ Function Remove-Accents {
     return ($normalizedString -replace '\p{M}', '')
 }
 
-Function Descripcion-Tratada {
-    param ($descripcionSinTratar)
-    
-    $descripcionSinAcentos = Remove-Accents $descripcionSinTratar.ToLower()
-    $newDescripcion = $descripcionSinAcentos -replace "[^a-zA-Z0-9 ]", "" -replace " ", "-"
-    return $newDescripcion
-}
 
 Function Mostrar-Navegacion {
     param($menu)
@@ -25,7 +18,8 @@ Function Mostrar-Navegacion {
     foreach($item in $menu) {
         
         if($item.Nivel -le 2 -and ![string]::IsNullOrEmpty($item.Descripcion)) {
-            $urlDocumentLibrary = Descripcion-Tratada -descripcionSinTratar $item.descripcion
+            $urlDocumentLibrary = & "..\Utils\tratarDescripcion.ps1" -descripcionSinTratar $item.descripcion
+            #$urlDocumentLibrary = Descripcion-Tratada -descripcionSinTratar $item.descripcion
             $list = Get-PnPList -Identity $urlDocumentLibrary -ErrorAction SilentlyContinue
             if (!$list) {
                 $docLibrary = New-PnPList -Title $item.descripcion -Url $urlDocumentLibrary -Template DocumentLibrary #-EnableContentTypes $true
@@ -54,9 +48,11 @@ Function Mostrar-Navegacion {
        
        
        if ($null -ne $ficheroACopiar ){
-            $destinationLibraryName = Descripcion-Tratada -descripcionSinTratar $item.folder
+            $destinationLibraryName = & "..\Utils\tratarDescripcion.ps1" -descripcionSinTratar $item.folder
+            #$destinationLibraryName = Descripcion-Tratada -descripcionSinTratar $item.folder
             $destinationLibrary = "($item.url)/$($destinationLibraryName)"
-            $newInternalName = Descripcion-Tratada -descripcionSinTratar $item.descripcion
+            #$newInternalName = Descripcion-Tratada -descripcionSinTratar $item.descripcion
+            $newInternalName = & "..\Utils\tratarDescripcion.ps1" -descripcionSinTratar $item.descripcion
             $newDisplayName = $item.Descripcion
             $sourceURLFile = "/sites/$($site)/SitePages/$($ficheroACopiar)"
             $targetUrl = "/sites/$($site)/$($destinationLibraryName)"
