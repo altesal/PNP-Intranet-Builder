@@ -100,7 +100,18 @@ Function Mostrar-Navegacion {
 
                 Write-Host "Page.2: $($newUrlfile)"
                 if ($page) {
+                    Write-Host "Page.3 SetPnPPage: $($newfile )"
                     Set-PnPPage -Identity $newfile -LayoutType Home -Title $newDisplayName
+                    Write-Host "Page.4 Move: /sites/$($site)/SitePages/$($newfile)   to    /sites/$($site)/$($destinationLibraryName)/$($newfile)"
+                    $from = "/sites/$($site)/SitePages/$($newfile)"
+                    $to = "/sites/$($site)/$($destinationLibraryName)/$($newfile)"
+                    $existingFile = Get-PnPFile -Url $to -AsListItem -ErrorAction SilentlyContinue
+                    if(!$existingFile){
+                        Move-PnPFile -ServerRelativeUrl $from -TargetUrl $to -Force
+                    }
+                    
+
+
                 } else {
                     Write-Host "La página $newfile no existe."
                 }
