@@ -15,10 +15,31 @@ Try{
         )
 
         foreach ($item in $navegacion) {
+            switch($item.plantilla){
+                "PT_Distribuidora"{
+                    $pagina = & "..\Utils\tratarDescripcion.ps1" -descripcionSinTratar $item.descripcion
+                    $folder = "SitePages"
+                    $linkMenu = "$($item.url)/$($folder)/$($pagina).aspx"
+                }
+                "PT_Final" {
+                    $pagina = & "..\Utils\tratarDescripcion.ps1" -descripcionSinTratar $item.descripcion
+                    $folder = "SitePages"
+                    $linkMenu = "$($item.url)/$($folder)/$($pagina).aspx"
+                }
+                "Home" {
+                    $pagina = "Home.aspx"
+                    $folder = "SitePages"
+                    $linkMenu = "$($item.url)/$($folder)/$($pagina)"
+                }
+                default {
+                    $linkMenu = $item.url
+                }
+            }
+            Write-Host "link Nav Principal==== $($linkMenu)"
             if ($item.NavPrincipal -eq 1) {
                 Write-Host "El item '$($item.Descripcion)' (ID: $($item.ID)) con $($item.url)   tiene NavPrincipal = $($item.NavPrincipal)"
                 #$item
-                Add-PnPNavigationNode -Title $item.Descripcion -Url $item.url -Location "TopNavigationBar"
+                Add-PnPNavigationNode -Title $item.Descripcion -Url $linkMenu -Location "TopNavigationBar"
                 $navnode = Get-PnPNavigationNode -Location TopNavigationBar
                 Write-host  $navnode.Title -f Yellow 
                 $navnodeTotal = Get-PnPNavigationNode

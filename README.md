@@ -23,12 +23,24 @@ pnpPS/ESPECIFICO/*
 1. Exportar páginas o plantillas
 
     ```
+    Modificar los siguientes parámetros de configuración:
+
     $siteCollectionPlantillaACopiar = "https://<tenant>.sharepoint.com/sites/<nombre_site>"
+    
     $nombreIntranet = "<alias_intranet>"
+    
     $clientId = "<client_id>"  #No requerido
+    
     $templateName = "<Nombre_fichero_XML>" 
 
     ``` 
+
+    ```Ejecutar la instrucción:
+
+    exportarSitePages.ps1 
+    
+    ```
+
 
     El xml se guardará bajo la carpeta Templates/exportaciones
 
@@ -60,6 +72,7 @@ pnpPS/ESPECIFICO/*
     - Hoja: Modulos. Columnas: ['Modulo','Desplegar','Site','Propiedades']
 
     - Hoja: Content Plan. Columnas: ['ID', 'Nivel','NavPrincipal', 'ParentID', 'displayNameN1', 'urlN1','link'] 
+            Plantilla recomanat. Posibles valores [Home, PT_Final, PT_Distribuidora]
 
             
 

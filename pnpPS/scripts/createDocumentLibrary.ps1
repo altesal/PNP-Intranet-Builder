@@ -5,17 +5,28 @@ Write-Host "($mensaje) Script: $($MyInvocation.MyCommand.Name)"
 $site = $siteJson.urlSite
 Write-Host "Site: $($site)"
 
-Function Remove-Accents {
-    param ($inputString)
-    $normalizedString = $inputString.Normalize([Text.NormalizationForm]::FormD)
-    return ($normalizedString -replace '\p{M}', '')
-}
-
-
 Function Mostrar-Navegacion {
     param($menu)
 
+    
+
+
+
+
     foreach($item in $menu) {
+
+
+        $subirCercador = $true 
+        if($subirCercador -and $item.ID -eq 1 )
+        {
+            $ficheroACopiar = "CercadorGeneral.aspx"
+            $pathTemplate = "C:\Users\mjped\Documents\Repos\PNP-Intranet-Builder\pnpPS\ESPECIFICO\ICS2\Templates\CercadorGeneral.xml"
+            $subirCercador = $false   
+            Invoke-PnPSiteTemplate -Path $pathTemplate 
+            $SetPnPPage = Set-PnPPage -Identity $ficheroACopiar  -Publish      
+        }
+
+
         
         if($item.Nivel -le 2 -and ![string]::IsNullOrEmpty($item.Descripcion)) {
             $urlDocumentLibrary = & "..\Utils\tratarDescripcion.ps1" -descripcionSinTratar $item.descripcion
@@ -98,6 +109,7 @@ Function Mostrar-Navegacion {
                 if ($page) {
                     Write-Host "Page.3 SetPnPPage: $($newfile )"
                     Set-PnPPage -Identity $newfile -LayoutType Home -Title $newDisplayName
+                    <#
                     Write-Host "Page.4 Move: /sites/$($site)/SitePages/$($newfile)   to    /sites/$($site)/$($destinationLibraryName)/$($newfile)"
                     $from = "/sites/$($site)/SitePages/$($newfile)"
                     $to = "/sites/$($site)/$($destinationLibraryName)/$($newfile)"
@@ -105,7 +117,7 @@ Function Mostrar-Navegacion {
                     if(!$existingFile){
                         Move-PnPFile -ServerRelativeUrl $from -TargetUrl $to -Force
                     }
-                    
+                    #>
 
 
                 } else {
