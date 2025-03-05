@@ -49,6 +49,9 @@ Function desplegarModulo {
                     'NavegacionQuickLunch'{
                         & .\scripts\navegacionQuickLunch.ps1 -Mensaje "Creando la Navegación QuickLunch..."
                     }
+                    'CrearListas'{
+                        & .\scripts\crearListas.ps1 -Mensaje "Importando lista EAP..."
+                    }
                 }
             }   
         } else {
@@ -143,6 +146,7 @@ try
                         desplegarModulo -nombreModulo "ContentPages"
                         desplegarModulo -nombreModulo "NavegacionPrincipal"
                         desplegarModulo -nombreModulo "NavegacionQuickLunch"
+                        desplegarModulo -nombreModulo "CrearListas"
                         <##>
                     }
                     catch {

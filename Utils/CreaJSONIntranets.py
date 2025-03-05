@@ -57,6 +57,40 @@ for site in data["sites"]:
   ]
   site["modulos"] = modulos  
 
+#Hoja Content Plan. Recursos
+#xls = pd.ExcelFile(excelContentPlanPath)
+#print("Hojas disponibles:", xls.sheet_names)
+columnasFileRecursos = ['Site','TipoRecurso','Lista_internalname','Lista_displayname','Lista_template','Lista_displayNameForTitle']
+columnasFileColumnasDeLista = ['scope','internalNameLista','internalName','displayName','isrequired','typef','choiceOptions']
+columnasDeLista = pd.read_excel(excelContentPlanPath, sheet_name='columnasListas', usecols=columnasFileColumnasDeLista)
+recursosSite = pd.read_excel(excelContentPlanPath, sheet_name='Recursos', usecols=columnasFileRecursos)
+recursosSite = recursosSite.fillna("")
+columnasDeLista = columnasDeLista.fillna("")
+
+recursosListas = recursosSite[recursosSite["TipoRecurso"] == "Lista"]
+for site in data["sites"]:
+    site_name = site["urlSite"]  
+    listas = [
+        {
+          "displayname": row["Lista_displayname"],
+          "internalname": row["Lista_internalname"],
+          "templateLista":row["Lista_template"],
+          "displayNameForTitle":row["Lista_displayNameForTitle"],
+          "columnas": [ 
+              {
+                "scope": col["scope"],
+                "nombreColumna": col["internalName"],
+                "displayName": col["displayName"],
+                "isrequired": int(col["isrequired"]),
+                "typef": col["typef"]
+              } | ({"choiceOptions": col["choiceOptions"]} if col["typef"] == "Choice" else {})
+               for _, col in columnasDeLista.iterrows()  if col["internalNameLista"] == row["Lista_internalname"]
+          ]
+        }
+        for _, row in recursosListas.iterrows() if row["Site"] == site_name
+    ]
+    site["listas"] = listas  
+
 #Hoja Content Plan. Navegación
 columnasHojaContentPlan = ['ID', 'Nivel','NavPrincipal', 'ParentID', 'displayNameN1', 'urlN1','link','Plantilla recomanat']
 tablaExcelNavegacion = pd.read_excel(excelContentPlanPath, sheet_name='ContentPlan', usecols=columnasHojaContentPlan)
