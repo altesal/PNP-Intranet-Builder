@@ -18,7 +18,7 @@ function CrearLista {
         Remove-PnPList -Identity $listName -Recycle -Force
     }
     $newList = New-PnPList -Title $listName -Url ("Lists/"+$listUrl) -Template $listTemplate
-    Write-Host "Nueva lista creada -> Name: $($newList.Name), Title: $($newList.Title), Id: $($newList.Id)"
+    Write-Host "Nueva lista creada -> Title: $($newList.Title)"
         
     if($lista.displayNameForTitle -ne "Title" -and -not [string]::IsNullOrWhiteSpace($lista.displayNameForTitle)){
         $fieldTitle = Get-PnPField -List $listName -Identity "Title"

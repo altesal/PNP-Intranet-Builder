@@ -60,7 +60,7 @@ for site in data["sites"]:
 #Hoja Content Plan. Recursos
 #xls = pd.ExcelFile(excelContentPlanPath)
 #print("Hojas disponibles:", xls.sheet_names)
-columnasFileRecursos = ['Site','TipoRecurso','Lista_internalname','Lista_displayname','Lista_template','Lista_displayNameForTitle']
+columnasFileRecursos = ['Site','TipoRecurso','Lista_internalname','Lista_displayname','Lista_template','Lista_displayNameForTitle','Lista_HojaDatosExcel']
 columnasFileColumnasDeLista = ['scope','internalNameLista','internalName','displayName','isrequired','typef','choiceOptions']
 columnasDeLista = pd.read_excel(excelContentPlanPath, sheet_name='columnasListas', usecols=columnasFileColumnasDeLista)
 recursosSite = pd.read_excel(excelContentPlanPath, sheet_name='Recursos', usecols=columnasFileRecursos)
@@ -75,6 +75,7 @@ for site in data["sites"]:
           "displayname": row["Lista_displayname"],
           "internalname": row["Lista_internalname"],
           "templateLista":row["Lista_template"],
+          "hojaDatosExcel":row["Lista_HojaDatosExcel"],
           "displayNameForTitle":row["Lista_displayNameForTitle"],
           "columnas": [ 
               {

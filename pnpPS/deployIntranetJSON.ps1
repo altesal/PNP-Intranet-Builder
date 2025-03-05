@@ -50,7 +50,10 @@ Function desplegarModulo {
                         & .\scripts\navegacionQuickLunch.ps1 -Mensaje "Creando la Navegación QuickLunch..."
                     }
                     'CrearListas'{
-                        & .\scripts\crearListas.ps1 -Mensaje "Importando lista EAP..."
+                        & .\scripts\crearListas.ps1 -Mensaje "Creando listas..."
+                    }
+                    'ImportarListas'{
+                        & .\scripts\importarDatosAListas.ps1 -Mensaje "Importar datoa a listas..." -listasSite $siteJson.listas
                     }
                 }
             }   
@@ -147,7 +150,7 @@ try
                         desplegarModulo -nombreModulo "NavegacionPrincipal"
                         desplegarModulo -nombreModulo "NavegacionQuickLunch"
                         desplegarModulo -nombreModulo "CrearListas"
-                        <##>
+                        desplegarModulo -nombreModulo "ImportarListas"
                     }
                     catch {
                         write-host "Error: $($_.Exception.Message)" -foregroundcolor Red

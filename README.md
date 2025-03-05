@@ -47,14 +47,18 @@ pnpPS/ESPECIFICO/*
 2. Crear listas
     Excel del contentPlan. Dos hojas: Recursos y columnasListas
     
-    Columnas Hoja Recursos: ['Site','TipoRecurso','Lista_internalname','Lista_displayname','Lista_template','Lista_displayNameForTitle']
+    Columnas Hoja Recursos: ['Site','TipoRecurso','Lista_internalname','Lista_displayname','Lista_template','Lista_displayNameForTitle','Lista_HojaDatosExcel']
     Columnas Hoja columnasListas = ['scope','internalNameLista','internalName','displayName','isrequired','typef','choiceOptions']
 
     La columan Id no aplica para TipoRecurso=Lista en la hoja Recursos
 
-    Debe estar habilitado, para una intranet concreta, el módulo CrearListas
+    El módulo CrearListas debe estar habilitado para una intranet concreta, o valer All si la lista se quiere crear en todos los sites
     
+3. Importar items en una lista
 
+    Hay que dar de alta los items a importar en una hoja del Excel con el nombre definido en la columan Lista_HojaDatosExcel, en la hoja Recursos de contentPlan.xlsx
+
+    Deben coincidir entre la hoja de datos y la definición de columnas en la hoja columnas listas: igual número de columnas, mismo nombre de columnas. Se puede cambiar el display name de Title, en la columan Lista_displayNameForTitle de la hoja Recursos.
 
 # Desplegar una nueva intranet
 
