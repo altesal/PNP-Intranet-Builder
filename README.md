@@ -44,6 +44,18 @@ pnpPS/ESPECIFICO/*
 
     El xml se guardará bajo la carpeta Templates/exportaciones
 
+2. Crear listas
+    Excel del contentPlan. Dos hojas: Recursos y columnasListas
+    
+    Columnas Hoja Recursos: ['Site','TipoRecurso','Lista_internalname','Lista_displayname','Lista_template','Lista_displayNameForTitle']
+    Columnas Hoja columnasListas = ['scope','internalNameLista','internalName','displayName','isrequired','typef','choiceOptions']
+
+    La columan Id no aplica para TipoRecurso=Lista en la hoja Recursos
+
+    Debe estar habilitado, para una intranet concreta, el módulo CrearListas
+    
+
+
 # Desplegar una nueva intranet
 
 1. Crear dentro de `pnpPS>ESPECIFICO` la siguiente estructura de carpetas 
