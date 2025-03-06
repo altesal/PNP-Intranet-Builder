@@ -3,16 +3,49 @@ import pandas as pd #pip install pandas
 import json
 import sys
 
-if len(sys.argv) < 2:
-    print("Uso: py.exe .\\CreaJSONIntranets.py <alias_intranet>")
+if len(sys.argv) < 3:
+    print("Uso: py.exe .\\CreaJSONIntranets.py <alias_intranet> <Entorno: DEV, INT, PRE, PRO>")
     sys.exit(1)
 
 alias_intranet = sys.argv[1]
+entornoDespliegue = sys.argv[2].upper()
+
+if entornoDespliegue not in ["DEV", "INT", "PRE", "PRO"]:
+    print("Error: El valor del entorno debe ser 'DEV', 'INT', 'PRE' o 'PRO'.")
+    sys.exit(1)
+
 carpetaFicheroDatos = os.path.join("..", "pnpPS", "ESPECIFICO", alias_intranet, "Data")
+fileConfig = os.path.join("..", "pnpPS", "ESPECIFICO", alias_intranet, "config.json")
+with open(fileConfig, "r", encoding="utf-8") as f:
+    infoConfig = json.load(f)
+
+configDescripccion = next((entorno["Descripcion"] for entorno in infoConfig["Configuracion"] if entorno["Entorno"] == entornoDespliegue), None)
+print("ConfigDescripccion:", configDescripccion)
+configEntorno = entornoDespliegue
+print("Entorno:", configEntorno)
+configTenanturl = next((entorno["TenantURL"] for entorno in infoConfig["Configuracion"] if entorno["Entorno"] == entornoDespliegue), None)
+print("TenantURL:", configTenanturl)
+configAplicacionRegistradaAzure = next((entorno["AplicacionRegistradaAzure"] for entorno in infoConfig["Configuracion"] if entorno["Entorno"] == entornoDespliegue), None)
+print("ClientID:", configAplicacionRegistradaAzure)
+configInteractive = next((entorno["Interactive"] for entorno in infoConfig["Configuracion"] if entorno["Entorno"] == entornoDespliegue), None)
+print("Modo interactivo:", configInteractive)
+
+respuesta = input("¿Deseas continuar? (presiona Enter para sí, 'no' para salir): ").strip().lower()
+if respuesta == 'no':
+    print("Saliendo del script.")
+    sys.exit(0) 
+print("Continuando con el script...")
 
 print(f"Busque su fichero contentPlan.json en la ruta: {carpetaFicheroDatos}")
 os.makedirs(carpetaFicheroDatos, exist_ok=True)
 output_file = os.path.join(carpetaFicheroDatos, "contentPlan.json")
+
+
+#Functions
+def obtener_site_sin_prefijo(url):
+    if len(url) >= 4 and url[:3] in ["DEV", "PRE", "PRO"] and url[3] == "-":
+        return url[4:]
+    return url
 
 data = {}
 data["sites"] = []
@@ -27,12 +60,12 @@ tablaExcelSites = tablaExcelSites.fillna("")
 for _, row in tablaExcelSites.iterrows():
     site = {
         "titleSite": row["titleSite"],
-        "urlSiteAbsoluta": row["urlSite"],
-        "urlSite":row["urlSite"].split('/')[-1],
+        "urlSiteAbsoluta": f"{configTenanturl}sites/{configEntorno}-{row['urlSite']}",
+        "urlSite":f"{configEntorno}-{row["urlSite"].split('/')[-1]}",
         "typeSite": row["typeSite"],
         "esHUB":row["esHUB"],
         "titleHUB":row["titleHUB"] if pd.notna(row["titleHUB"]) else "",
-        "asociarAHUB":row["asociarAHUB"] if pd.notna(row["asociarAHUB"]) else "",
+        "asociarAHUB": f"{configTenanturl}sites/{configEntorno}-{row["asociarAHUB"]}" if pd.notna(row["asociarAHUB"]) and str(row["asociarAHUB"]).strip() else "",
         "navegacion":""
     }
     data["sites"].append(site)
@@ -43,7 +76,7 @@ modulosSiteExcel = pd.read_excel(excelContentPlanPath, sheet_name='Modulos', use
 modulosSiteExcel = modulosSiteExcel.fillna("")
 
 for site in data["sites"]:
-  site_name = site["urlSite"]  
+  site_name = obtener_site_sin_prefijo(site["urlSite"])  
   modulos = [
       {
         "modulo": row["Modulo"],
@@ -69,7 +102,7 @@ columnasDeLista = columnasDeLista.fillna("")
 
 recursosListas = recursosSite[recursosSite["TipoRecurso"] == "Lista"]
 for site in data["sites"]:
-    site_name = site["urlSite"]  
+    site_name = obtener_site_sin_prefijo(site["urlSite"])
     listas = [
         {
           "displayname": row["Lista_displayname"],
@@ -93,7 +126,7 @@ for site in data["sites"]:
     site["listas"] = listas  
 
 #Hoja Content Plan. Navegación
-columnasHojaContentPlan = ['ID', 'Nivel','NavPrincipal', 'ParentID', 'displayNameN1', 'urlN1','link','Plantilla recomanat']
+columnasHojaContentPlan = ['ID', 'Nivel','NavPrincipal', 'ParentID', 'Description', 'urlN1','pageURL','enllac','Plantilla recomanat']
 tablaExcelNavegacion = pd.read_excel(excelContentPlanPath, sheet_name='ContentPlan', usecols=columnasHojaContentPlan)
 tablaExcelNavegacion = tablaExcelNavegacion.fillna("")
 
@@ -107,17 +140,22 @@ def construir_navegacion(tablaExcelNavegacion, parent_id, site_url, parent_level
         if nivel == 0:
             folder = ""
         elif nivel == 1 or nivel == 2:
-            folder = row["displayNameN1"]
+            folder = row["Description"]
             parent_level2_desc = folder  # Guardar el nombre para los niveles 3+
         elif nivel >= 3:
             folder = parent_level2_desc
+
+        if row["enllac"]:
+            link = row["enllac"]
+        else:
+            link = f"{configTenanturl}sites/{configEntorno}-{row["urlN1"]}{row["pageURL"]}"
 
         nodo = {
             "ID": row["ID"],
             "Nivel":row["Nivel"],
             "NavPrincipal" : 1 if row["NavPrincipal"] == 1 else 0,
-            "Descripcion": row["displayNameN1"],
-            "url": row["link"],
+            "Descripcion": row["Description"],
+            "url": link,
             "plantilla":row["Plantilla recomanat"],
             "folder": folder,
             "Submenus": construir_navegacion(tablaExcelNavegacion, row["ID"],site_url,parent_level2_desc)  # Llamada recursiva
@@ -126,11 +164,11 @@ def construir_navegacion(tablaExcelNavegacion, parent_id, site_url, parent_level
     return items
 
 # Iteramos por cada sitio y le agregamos la navegación
-for sitio in data["sites"]:
-    navegacion = construir_navegacion(tablaExcelNavegacion, parent_id="",site_url=sitio["urlSite"])  # Ajustar el parent_id según sea necesario
+for site in data["sites"]:
+    site_url_ContentPlan_sinPrefijo = obtener_site_sin_prefijo(site["urlSite"])
+    navegacion = construir_navegacion(tablaExcelNavegacion, parent_id="",site_url=site_url_ContentPlan_sinPrefijo)  # Ajustar el parent_id según sea necesario
  
-    sitio["navegacion"] = navegacion  # Agregar la navegación al sitio
-
+    site["navegacion"] = navegacion  # Agregar la navegación al site
 
 with open(output_file, "w") as file:
         json.dump(data, file, indent=4)
