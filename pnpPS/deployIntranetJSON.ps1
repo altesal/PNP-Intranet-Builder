@@ -44,7 +44,7 @@ Function desplegarModulo {
                         & .\scripts\uploadImages.ps1 -Mensaje "Subiendo imágenes a la biblioteca Site Assets"
                     }
                     'NavegacionPrincipal'{
-                        & .\scripts\navegacionPrincipal.ps1 -Mensaje "Creando la Navegación Principal..."
+                        & .\scripts\navegacionPrincipal.ps1 -Mensaje "Creando la Navegación Principal..."            
                     }
                     'NavegacionQuickLunch'{
                         & .\scripts\navegacionQuickLunch.ps1 -Mensaje "Creando la Navegación QuickLunch..."
@@ -147,10 +147,22 @@ try
                         desplegarModulo -nombreModulo "Images"
                         desplegarModulo -nombreModulo "Templates"
                         desplegarModulo -nombreModulo "ContentPages"
-                        desplegarModulo -nombreModulo "NavegacionPrincipal"
-                        desplegarModulo -nombreModulo "NavegacionQuickLunch"
                         desplegarModulo -nombreModulo "CrearListas"
                         desplegarModulo -nombreModulo "ImportarListas"
+                        #desplegarModulo -nombreModulo "NavegacionPrincipal"
+                        #desplegarModulo -nombreModulo "NavegacionQuickLunch"
+                    }
+                    catch {
+                        write-host "Error: $($_.Exception.Message)" -foregroundcolor Red
+                    }
+                } 
+
+                $JSONFIle.sites | ForEach-Object {
+                    Try{
+                        $siteJson = $_
+                        $urlAbsoluta = $siteJson.urlSiteAbsoluta
+                        desplegarModulo -nombreModulo "NavegacionPrincipal"
+                        desplegarModulo -nombreModulo "NavegacionQuickLunch"
                     }
                     catch {
                         write-host "Error: $($_.Exception.Message)" -foregroundcolor Red
