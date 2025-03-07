@@ -78,9 +78,10 @@ try
     $choicesAccion = New-Object Collections.ObjectModel.Collection[Management.Automation.Host.ChoiceDescription]
     $choicesAccion.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&1.Borrar y crear estructura de sites'))
     $choicesAccion.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&2.Desplegar Intranet'))
+    $choicesAccion.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&3.Probar conexión...'))
     $decisionAccion = $Host.UI.PromptForChoice($title, $questionAccion, $choicesAccion, 0)
 
-    switch -regex ($decisionAccion) {
+    switch ($decisionAccion) {
         '0' {
                 Write-Host 'Borrar y crear estructura de sites...'
                 $accion = 'Borrar-Crear-Sites'
@@ -90,6 +91,11 @@ try
                 Write-Host 'Desplegar intranet...'
                 $accion = 'DesplegarIntranet'
                 $descripcionAccion= "Desplegar intranet..."
+            }	
+        '2' {
+                Write-Host 'Probar conexión...'
+                $accion = 'Probar-Conexion'
+                $descripcionAccion= "Probar conexión..."
             }	
         default { 
             $accion = ""
@@ -103,12 +109,30 @@ try
     $choicesEntorno.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&3.PRE. PREPRODUCCIÓN'))
     $choicesEntorno.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&4.PRO. PRODUCCIÓN'))
     $titleEntorno="ENTORNOS"
-    $entornoSeleccionado = $Host.UI.PromptForChoice($titleEntorno, $questionEntorno, $choicesEntorno, 0)
+    $valorEntornoSeleccionado = $Host.UI.PromptForChoice($titleEntorno, $questionEntorno, $choicesEntorno, 0)
+
+    switch ($valorEntornoSeleccionado) {
+        '0' {
+                $entorno = 'DEV'
+            }	
+        '1' {
+                $entorno = 'INT'
+            }	
+        '2' {
+                $entorno = 'PRE'
+            }	
+        '3' {
+                $entorno = 'PRO'
+            }	
+        default { 
+            $accion = ""
+        }
+    }
 
     $ficheroConfiguracion = ".\ESPECIFICO\$($nombreIntranet)\config.json"
 
     if (Test-Path $ficheroConfiguracion) {
-        $config = (Get-Content $ficheroConfiguracion | ConvertFrom-Json).Configuracion | Where-Object { $_.Entorno -eq "DEV" }
+        $config = (Get-Content $ficheroConfiguracion | ConvertFrom-Json).Configuracion | Where-Object { $_.Entorno -eq $entorno }
         if ($config.Count -ne 1) { throw "Se esperaba exactamente un objeto, pero se encontraron $($config.Count)." }
         $nombreFichero = & "..\Utils\nombreFicheroLog.ps1" -entorno $config.entorno
         $fitxerLog = (".\ESPECIFICO\" + $nombreIntranet + "\Log\" + $nombreFichero) 
@@ -121,6 +145,17 @@ try
         $contenPlanFile = (".\ESPECIFICO\"+$nombreIntranet+"\Data\contentPlan.json")
 
         switch ($accion) {
+            "Probar-Conexion" {
+                if( $modoInteractivo -eq $true) { 
+                    Write-Host "Conexión establecida con éxito en modo interactivo" -f Green
+                    Connect-PnPOnline -Url $tenantUrl -ClientId $clientId -Interactive
+                } 
+                else {
+                    Write-Host "Conexión establecida con éxito usando WebLogin" -f Green
+                    Connect-PnPOnline -Url $tenantUrl -UseWebLogin
+                    Connect-PnPOnline -Url $tenantUrl -ClientId $clientId -Interactive
+                } 
+            }
             "Borrar-Crear-Sites" {
                 if( $modoInteractivo -eq $true) { 
                     Write-Host "Conexión interactiva..."        
