@@ -25,8 +25,8 @@ configEntorno = entornoDespliegue
 print("Entorno:", configEntorno)
 configTenanturl = next((entorno["TenantURL"] for entorno in infoConfig["Configuracion"] if entorno["Entorno"] == entornoDespliegue), None)
 print("TenantURL:", configTenanturl)
-configAplicacionRegistradaAzure = next((entorno["AplicacionRegistradaAzure"] for entorno in infoConfig["Configuracion"] if entorno["Entorno"] == entornoDespliegue), None)
-print("ClientID:", configAplicacionRegistradaAzure)
+configClientID = next((entorno["ClientID"] for entorno in infoConfig["Configuracion"] if entorno["Entorno"] == entornoDespliegue), None)
+print("ClientID:", configClientID)
 configInteractive = next((entorno["Interactive"] for entorno in infoConfig["Configuracion"] if entorno["Entorno"] == entornoDespliegue), None)
 print("Modo interactivo:", configInteractive)
 
@@ -43,7 +43,7 @@ output_file = os.path.join(carpetaFicheroDatos, "contentPlan.json")
 
 #Functions
 def obtener_site_sin_prefijo(url):
-    if len(url) >= 4 and url[:3] in ["DEV", "PRE", "PRO"] and url[3] == "-":
+    if len(url) >= 4 and url[:3] in ["DEV", "PRE", "PRO","INT"] and url[3] == "-":
         return url[4:]
     return url
 
@@ -166,6 +166,8 @@ def construir_navegacion(tablaExcelNavegacion, parent_id, site_url, parent_level
 # Iteramos por cada sitio y le agregamos la navegación
 for site in data["sites"]:
     site_url_ContentPlan_sinPrefijo = obtener_site_sin_prefijo(site["urlSite"])
+    print(f"*site[urlSite]= {site["urlSite"]}")
+    print(f"*site_url_ContentPlan_sinPrefijo= {site_url_ContentPlan_sinPrefijo}")
     navegacion = construir_navegacion(tablaExcelNavegacion, parent_id="",site_url=site_url_ContentPlan_sinPrefijo)  # Ajustar el parent_id según sea necesario
  
     site["navegacion"] = navegacion  # Agregar la navegación al site

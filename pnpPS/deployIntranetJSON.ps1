@@ -85,17 +85,14 @@ try
         '0' {
                 Write-Host 'Borrar y crear estructura de sites...'
                 $accion = 'Borrar-Crear-Sites'
-                $descripcionAccion= "Borrar y crear estructura de sites..."
             }	
         '1' {
                 Write-Host 'Desplegar intranet...'
                 $accion = 'DesplegarIntranet'
-                $descripcionAccion= "Desplegar intranet..."
             }	
         '2' {
                 Write-Host 'Probar conexión...'
                 $accion = 'Probar-Conexion'
-                $descripcionAccion= "Probar conexión..."
             }	
         default { 
             $accion = ""
@@ -141,14 +138,21 @@ try
         $config
         $modoInteractivo = [bool]($config.Interactive -eq 1)
         $tenantUrl = $config.TenantURL
-        $clientId = $config.AplicacionRegistradaAzure
+        $clientId = $config.ClientID
+        $clientSecret = $config.SecretID
+        $thumbprint = $config.Thumbprint
+        $tenantconexion = $config.Tenant
         $contenPlanFile = (".\ESPECIFICO\"+$nombreIntranet+"\Data\contentPlan.json")
 
         switch ($accion) {
             "Probar-Conexion" {
                 if( $modoInteractivo -eq $true) { 
                     Write-Host "Conexión establecida con éxito en modo interactivo" -f Green
-                    Connect-PnPOnline -Url $tenantUrl -ClientId $clientId -Interactive
+                    if ($entorno -eq "INT") {
+                        Connect-PnPOnline -Url $tenantUrl -ClientId $clientId -Thumbprint $thumbprint -Tenant $tenantconexion 
+                    } else {
+                        Connect-PnPOnline -Url $tenantUrl -ClientId $clientId -Interactive
+                    }
                 } 
                 else {
                     Write-Host "Conexión establecida con éxito usando WebLogin" -f Green
@@ -160,7 +164,7 @@ try
                 if( $modoInteractivo -eq $true) { 
                     Write-Host "Conexión interactiva..."        
                     Connect-PnPOnline -Url $tenantUrl -ClientId $clientId -Interactive
-                    & .\scripts\borrarSites.ps1 -Mensaje "Borrando sites..." 
+                    #& .\scripts\borrarSites.ps1 -Mensaje "Borrando sites..." 
                     & .\scripts\crearSites.ps1 -Mensaje "Creando estructura de sites..." 
                 } 
                 else {
